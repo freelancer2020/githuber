@@ -6,8 +6,8 @@ type Como = ReturnType<React.FC>;
 
 type GridProps = {
   finder: Como;
-  result: Como;
-  moreInfo: Como;
+  result?: Como;
+  moreInfo?: Como;
 };
 
 const GridContainer = styled(Grid)(({ theme }) => ({
@@ -16,6 +16,7 @@ const GridContainer = styled(Grid)(({ theme }) => ({
   paddingRight: "20px",
   marginTop: "200px",
   zIndex: 10,
+  overflowX: "hidden",
 }));
 
 const GridSystem: React.FC<GridProps> = (props) => {

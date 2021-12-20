@@ -58,33 +58,31 @@ const Finder: React.FC = () => {
   const [request, setRequest] = useState<boolean>(false);
   const [alert, setAlert] = useState<boolean>(false);
 
-  const githubUser = useSelector<RootState>(
-    (state) => state.githubProfile.data
-  );
+  // const githubUser = useSelector<RootState>(
+  //   (state) => state.githubProfile.data
+  // );
   const dispatch = useDispatch<AppDispatch>();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (alert) setAlert(false);
+    if (serverError) setSeverError(false);
     let user = e.target.value;
     setUserName(user);
   };
 
-  const inputValidation = (str: string) => {
-    if (!str) {
+  const findUser = () => {
+    if (!userName) {
       setAlert(true);
       return false;
     }
-  };
 
-  const findUser = () => {
-    const validate = inputValidation(userName);
-    if (!validate) return false;
     setRequest(true);
     window
       .fetch(`https://api.github.com/users/${userName}`)
       .then((response) => {
         if (response.status !== 200) throw new Error("Network Error");
         setSeverError(false);
+
         return response.json();
       })
       .then((data) => {
@@ -98,10 +96,16 @@ const Finder: React.FC = () => {
             repos_url: data["repos_url"],
           },
         };
+        console.log(userData);
         dispatch(githubAction.storeUserProfile(userData));
       })
-      .finally(() => setRequest(false))
-      .catch((err) => setSeverError(true));
+      .finally(() => {
+        setRequest(false);
+        setUserName("");
+      })
+      .catch((err) => {
+        setSeverError(true);
+      });
   };
 
   return (
@@ -120,6 +124,9 @@ const Finder: React.FC = () => {
       </FinderFormContainer>
       <FinderNetworkState>
         {request && <img alt="loader" src={network} />}
+        {serverError && (
+          <Typography variant="body2" children="Unable to get the result" />
+        )}
       </FinderNetworkState>
       <FinderAlert>
         {alert && (

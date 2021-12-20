@@ -9,15 +9,11 @@ import Finder from "./Components/Finder/Finder";
 
 const App: React.FC = () => {
   return (
-    <Box>
+    <Box sx={{ overflowX: "hidden" }}>
       <RootLeaves />
       <Header />
       <Banner />
-      <GridSystem
-        finder={<Finder />}
-        result={<Finder />}
-        moreInfo={<Finder />}
-      />
+      <GridSystem finder={<Finder />} />
     </Box>
   );
 };
