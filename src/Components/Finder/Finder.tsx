@@ -1,6 +1,19 @@
-import React from "react";
-import { Box, FormControl, InputLabel, Input, Button } from "@mui/material";
+import React, { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { githubAction, GitHubUserData } from "../../store/giUserProfile";
+import { RootState, AppDispatch } from "../../store/store";
+
+import {
+  Box,
+  FormControl,
+  InputLabel,
+  Input,
+  Button,
+  Typography,
+} from "@mui/material";
 import { styled } from "@mui/system";
+
+import network from "../../assets/network.gif";
 
 const FinderContainer = styled(Box)(({ theme }) => ({
   width: "100%",
@@ -40,17 +53,83 @@ const FinderAlert = styled(Box)(({ theme }) => ({
 }));
 
 const Finder: React.FC = () => {
+  const [userName, setUserName] = useState<string>("");
+  const [serverError, setSeverError] = useState<boolean>(false);
+  const [request, setRequest] = useState<boolean>(false);
+  const [alert, setAlert] = useState<boolean>(false);
+
+  const githubUser = useSelector<RootState>(
+    (state) => state.githubProfile.data
+  );
+  const dispatch = useDispatch<AppDispatch>();
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (alert) setAlert(false);
+    let user = e.target.value;
+    setUserName(user);
+  };
+
+  const inputValidation = (str: string) => {
+    if (!str) {
+      setAlert(true);
+      return false;
+    }
+  };
+
+  const findUser = () => {
+    const validate = inputValidation(userName);
+    if (!validate) return false;
+    setRequest(true);
+    window
+      .fetch(`https://api.github.com/users/${userName}`)
+      .then((response) => {
+        if (response.status !== 200) throw new Error("Network Error");
+        setSeverError(false);
+        return response.json();
+      })
+      .then((data) => {
+        const userData: GitHubUserData = {
+          data: {
+            login: data["login"],
+            name: data["name"],
+            avatar_url: data["avatar_url"],
+            html_url: data["html_url"],
+            location: data["location"],
+            repos_url: data["repos_url"],
+          },
+        };
+        dispatch(githubAction.storeUserProfile(userData));
+      })
+      .finally(() => setRequest(false))
+      .catch((err) => setSeverError(true));
+  };
+
   return (
     <FinderContainer>
       <FinderFormContainer>
         <FormControl sx={{ width: "80%" }}>
           <InputLabel htmlFor="my-input">GitHub User Name</InputLabel>
-          <Input id="my-input" required />
+          <Input
+            id="my-input"
+            required
+            value={userName}
+            onChange={handleInputChange}
+          />
         </FormControl>
-        <Button variant="contained" children="Find" />
+        <Button variant="contained" children="Find" onClick={findUser} />
       </FinderFormContainer>
-      <FinderNetworkState></FinderNetworkState>
-      <FinderAlert></FinderAlert>
+      <FinderNetworkState>
+        {request && <img alt="loader" src={network} />}
+      </FinderNetworkState>
+      <FinderAlert>
+        {alert && (
+          <Typography
+            variant="body2"
+            children="*Enter User Name"
+            sx={{ color: "red" }}
+          />
+        )}
+      </FinderAlert>
     </FinderContainer>
   );
 };
