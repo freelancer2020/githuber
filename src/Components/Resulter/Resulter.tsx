@@ -81,15 +81,18 @@ const ResulterRows: React.FC<ResulterProps> = (props) => {
         if (response.status !== 200) throw new Error("something went wrong");
         return response.json();
       })
-      .then((data) => {
-        const reposData: ReposData = {
-          ready: true,
-          name: data["name"],
-          description: data["description"],
-          visibility: data["visibility"],
-          html_url: data["html_url"],
-        };
-        dispatch(githubReposAction.getRepos(reposData));
+      .then((data: []) => {
+        let arr: any[] = [];
+        data.map((item) => {
+          arr.push({
+            ready: true,
+            name: item["name"],
+            description: item["description"],
+            visibility: item["visibility"],
+            html_url: item["html_url"],
+          });
+        });
+        dispatch(githubReposAction.getRepos(arr));
       })
       .catch((err) => setError(true));
   };

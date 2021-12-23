@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "./store/store";
-import { Obj, GitHubUserData } from "./store/giUserProfile";
+import { ReposData } from "./store/githubUserRepos";
+import { GitHubUserData } from "./store/giUserProfile";
 import { Box } from "@mui/material";
 import Header from "./Components/Header/Header";
 import RootLeaves from "./Components/Header/Leaves";
@@ -10,22 +11,50 @@ import GridSystem from "./Components/Layouts/Grid";
 
 import Finder from "./Components/Finder/Finder";
 import Resulter from "./Components/Resulter/Resulter";
+import Repos from "./Components/Repos/Repos";
 
 const App: React.FC = () => {
   const githubUserData = useSelector<RootState, GitHubUserData>(
     (state) => state.githubProfile
   );
 
-  const userDataAvilable = useSelector<RootState, boolean>(
-    (state) => state.githubProfile.avilable
+  const userRepos = useSelector<RootState, ReposData[]>(
+    (state) => state.githubUserRepo.data
   );
+
+  const openRepo = (link: string | undefined) => {
+    if (link) window.open(`${link}`, "_blank");
+  };
 
   return (
     <Box sx={{ overflowX: "hidden" }}>
       <RootLeaves />
       <Header />
       <Banner />
-      <GridSystem finder={<Finder />}>
+      <GridSystem
+        finder={<Finder />}
+        moreInfo={
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              overflowY: "auto",
+              height: "300px",
+            }}
+          >
+            {userRepos.map((repo, index) => (
+              <Repos
+                key={index.toString()}
+                name={repo.name}
+                visibility={repo.visibility}
+                description={repo.description}
+                html_url={repo.html_url}
+                click={() => openRepo(repo.html_url)}
+              />
+            ))}
+          </Box>
+        }
+      >
         {githubUserData.avilable && (
           <Resulter
             bio={githubUserData.bio ? githubUserData.bio : ""}

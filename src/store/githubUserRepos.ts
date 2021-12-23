@@ -1,12 +1,21 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 export interface ReposData {
-  ready: boolean;
+  ready?: boolean;
   name: string;
   description: string;
   visibility: string;
-  html_url: string;
+  html_url?: string;
+  click?: () => void;
 }
+
+interface ReposArray {
+  data: ReposData[];
+}
+
+const reposArray: ReposArray = {
+  data: [],
+};
 
 const initState: ReposData = {
   ready: false,
@@ -18,14 +27,11 @@ const initState: ReposData = {
 
 export const githubRepos = createSlice({
   name: "Github User Repos",
-  initialState: initState,
+  initialState: reposArray,
   reducers: {
     getRepos(state, action) {
-      state.ready = action.payload.ready;
-      state.description = action.payload.description;
-      state.name = action.payload.name;
-      state.visibility = action.payload.visibility;
-      state.html_url = action.payload.html_url;
+      state.data = action.payload;
+      console.log(action.payload);
     },
   },
 });
