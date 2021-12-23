@@ -26,7 +26,7 @@ const GridSystem: React.FC<GridProps> = (props) => {
         {props.finder}
       </Grid>
       <Grid item xs={12} sm={6} md={4} lg={4} xl={3}>
-        {props.result}
+        {props.children}
       </Grid>
       <Grid item xs={12} sm={6} md={4} lg={4} xl={3}>
         {props.moreInfo}

@@ -1,8 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-type Obj = {
+export type Obj = {
+  bio: string;
   login: string;
   name?: string;
+  email: string;
   avatar_url: string;
   html_url: string;
   location: string;
@@ -10,18 +12,27 @@ type Obj = {
 };
 
 export type GitHubUserData = {
-  data: Obj;
+  avilable: boolean;
+  bio: string | null;
+  login: string;
+  name?: string | null;
+  email: string | null;
+  avatar_url: string;
+  html_url: string | null;
+  location: string | null;
+  repos_url: RequestInfo;
 };
 
 const githubUserData: GitHubUserData = {
-  data: {
-    login: "",
-    name: "",
-    avatar_url: "",
-    html_url: "",
-    location: "",
-    repos_url: "",
-  },
+  avilable: false,
+  bio: "",
+  login: "",
+  email: "",
+  name: "",
+  avatar_url: "",
+  html_url: "",
+  location: "",
+  repos_url: "",
 };
 
 export const githubUser = createSlice({
@@ -29,7 +40,20 @@ export const githubUser = createSlice({
   initialState: githubUserData,
   reducers: {
     storeUserProfile(state, action) {
-      state.data = action.payload;
+      state.avilable = action.payload.avilable;
+      state.login = action.payload.login;
+      state.avilable = action.payload.avilable;
+      state.bio = action.payload.bio;
+      state.avatar_url = action.payload.avatar_url;
+      state.location = action.payload.location;
+      state.html_url = action.payload.html_url;
+      state.repos_url = action.payload.repos_url;
+    },
+    confirmUserData(state) {
+      state.avilable = true;
+    },
+    deconfirmUserData(state) {
+      state.avilable = false;
     },
   },
 });

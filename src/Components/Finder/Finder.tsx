@@ -18,6 +18,10 @@ import network from "../../assets/network.gif";
 const FinderContainer = styled(Box)(({ theme }) => ({
   width: "100%",
   height: "fit-content",
+  minHeight: "0px",
+  [theme.breakpoints.up("sm")]: {
+    minHeghit: "350px",
+  },
   display: "flex",
   flexDirection: "column",
 }));
@@ -58,9 +62,6 @@ const Finder: React.FC = () => {
   const [request, setRequest] = useState<boolean>(false);
   const [alert, setAlert] = useState<boolean>(false);
 
-  // const githubUser = useSelector<RootState>(
-  //   (state) => state.githubProfile.data
-  // );
   const dispatch = useDispatch<AppDispatch>();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -87,17 +88,19 @@ const Finder: React.FC = () => {
       })
       .then((data) => {
         const userData: GitHubUserData = {
-          data: {
-            login: data["login"],
-            name: data["name"],
-            avatar_url: data["avatar_url"],
-            html_url: data["html_url"],
-            location: data["location"],
-            repos_url: data["repos_url"],
-          },
+          avilable: true,
+          bio: data["bio"],
+          email: data["email"],
+          login: data["login"],
+          name: data["name"],
+          avatar_url: data["avatar_url"],
+          html_url: data["html_url"],
+          location: data["location"],
+          repos_url: data["repos_url"],
         };
-        console.log(userData);
+
         dispatch(githubAction.storeUserProfile(userData));
+        dispatch(githubAction.confirmUserData());
       })
       .finally(() => {
         setRequest(false);
@@ -105,6 +108,7 @@ const Finder: React.FC = () => {
       })
       .catch((err) => {
         setSeverError(true);
+        dispatch(githubAction.deconfirmUserData());
       });
   };
 
@@ -112,7 +116,7 @@ const Finder: React.FC = () => {
     <FinderContainer>
       <FinderFormContainer>
         <FormControl sx={{ width: "80%" }}>
-          <InputLabel htmlFor="my-input">GitHub User Name</InputLabel>
+          <InputLabel htmlFor="my-input">GitHub Login Name</InputLabel>
           <Input
             id="my-input"
             required
@@ -132,7 +136,7 @@ const Finder: React.FC = () => {
         {alert && (
           <Typography
             variant="body2"
-            children="*Enter User Name"
+            children="*Enter Github Login name"
             sx={{ color: "red" }}
           />
         )}
