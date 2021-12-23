@@ -1,7 +1,9 @@
 import React, { useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import { githubAction, GitHubUserData } from "../../store/giUserProfile";
-import { RootState, AppDispatch } from "../../store/store";
+import { reposStateAction } from "../../store/ReposState";
+import { githubReposAction } from "../../store/githubUserRepos";
+import { AppDispatch } from "../../store/store";
 
 import {
   Box,
@@ -76,6 +78,8 @@ const Finder: React.FC = () => {
       setAlert(true);
       return false;
     }
+    dispatch(reposStateAction.deactiveRepos());
+    dispatch(githubReposAction.getRepos([]));
 
     setRequest(true);
     window

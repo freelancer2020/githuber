@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "./store/store";
 import { ReposData } from "./store/githubUserRepos";
@@ -22,6 +22,10 @@ const App: React.FC = () => {
     (state) => state.githubUserRepo.data
   );
 
+  const repoState = useSelector<RootState, boolean>(
+    (state) => state.repoState.reposActive
+  );
+
   const openRepo = (link: string | undefined) => {
     if (link) window.open(`${link}`, "_blank");
   };
@@ -42,16 +46,18 @@ const App: React.FC = () => {
               height: "300px",
             }}
           >
-            {userRepos.map((repo, index) => (
-              <Repos
-                key={index.toString()}
-                name={repo.name}
-                visibility={repo.visibility}
-                description={repo.description}
-                html_url={repo.html_url}
-                click={() => openRepo(repo.html_url)}
-              />
-            ))}
+            {repoState
+              ? userRepos.map((repo, index) => (
+                  <Repos
+                    key={index.toString()}
+                    name={repo.name}
+                    visibility={repo.visibility}
+                    description={repo.description}
+                    html_url={repo.html_url}
+                    click={() => openRepo(repo.html_url)}
+                  />
+                ))
+              : null}
           </Box>
         }
       >

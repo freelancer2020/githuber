@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { githubReposAction } from "../../store/githubUserRepos";
+import { reposStateAction } from "../../store/ReposState";
 import { RootState, AppDispatch } from "../../store/store";
-import { ReposData } from "../../store/githubUserRepos";
 import { ArrowRightAlt } from "@mui/icons-material";
 
 import { Paper, Avatar, Box, Button, Typography } from "@mui/material";
@@ -75,6 +75,7 @@ const ResulterRows: React.FC<ResulterProps> = (props) => {
   };
 
   const getRepo = () => {
+    dispatch(reposStateAction.activeRepos());
     window
       .fetch(userRepos)
       .then((response) => {
