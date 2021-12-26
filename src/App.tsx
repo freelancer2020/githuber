@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "./store/store";
 import { ReposData } from "./store/githubUserRepos";
 import { GitHubUserData } from "./store/giUserProfile";
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import Header from "./Components/Header/Header";
 import RootLeaves from "./Components/Header/Leaves";
 import Banner from "./Components/Banner/Banner";
@@ -26,6 +26,10 @@ const App: React.FC = () => {
     (state) => state.repoState.reposActive
   );
 
+  const isRepos = useSelector<RootState, boolean>(
+    (state) => state.networkState.repos
+  );
+
   const openRepo = (link: string | undefined) => {
     if (link) window.open(`${link}`, "_blank");
   };
@@ -46,8 +50,9 @@ const App: React.FC = () => {
               height: "300px",
             }}
           >
-            {repoState
-              ? userRepos.map((repo, index) => (
+            {repoState ? (
+              isRepos ? (
+                userRepos.map((repo, index) => (
                   <Repos
                     key={index.toString()}
                     name={repo.name}
@@ -57,7 +62,21 @@ const App: React.FC = () => {
                     click={() => openRepo(repo.html_url)}
                   />
                 ))
-              : null}
+              ) : (
+                <Box
+                  sx={{
+                    display: "flex",
+                    width: "100%",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Typography
+                    variant="h6"
+                    children="The user has no repositories!"
+                  />
+                </Box>
+              )
+            ) : null}
           </Box>
         }
       >

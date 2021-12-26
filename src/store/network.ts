@@ -22,11 +22,11 @@ export const network = createSlice({
     },
 
     noRepos(state) {
-      state.repos = true;
+      state.repos = false;
     },
 
     yesRepos(state) {
-      state.repos = false;
+      state.repos = true;
     },
   },
 });

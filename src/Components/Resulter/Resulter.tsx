@@ -76,18 +76,17 @@ const ResulterRows: React.FC<ResulterProps> = (props) => {
   };
 
   const getRepo = () => {
-    dispatch(reposStateAction.activeRepos());
     dispatch(networkAction.fetchStart());
     window
       .fetch(userRepos)
       .then((response) => {
         if (response.status !== 200) throw new Error("something went wrong");
+        dispatch(reposStateAction.activeRepos()); // active repos
         return response.json();
       })
       .then((data: []) => {
-        data.length <= 0
-          ? dispatch(networkAction.noRepos())
-          : dispatch(networkAction.yesRepos());
+        if (data.length <= 0) return dispatch(networkAction.noRepos());
+        dispatch(networkAction.yesRepos()); // there is repos to render
         let arr: any[] = [];
         data.map((item) => {
           arr.push({
