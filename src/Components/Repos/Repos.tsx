@@ -1,7 +1,12 @@
 import React from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "../../store/store";
 import { Paper, Box, Typography } from "@mui/material";
 import { styled } from "@mui/system";
 import { ArrowRightAlt } from "@mui/icons-material";
+
+//Skeletons
+import SkeletonRepo from "../Skeletons/SkeletonRepo";
 
 import { ReposData } from "../../store/githubUserRepos";
 
@@ -26,7 +31,11 @@ const RepoTypo = styled(Typography)(({ theme }) => ({
 }));
 
 const Repos: React.FC<ReposData> = (props) => {
-  return (
+  const fetchDone = useSelector<RootState, boolean>(
+    (state) => state.networkState.loaded
+  );
+
+  return fetchDone ? (
     <ReposContainer>
       <RepoRow sx={{ justifyContent: "space-between" }}>
         <RepoTypo variant="body1" sx={{ fontWeight: "bold" }}>
@@ -51,6 +60,8 @@ const Repos: React.FC<ReposData> = (props) => {
         />
       </RepoRow>
     </ReposContainer>
+  ) : (
+    <SkeletonRepo />
   );
 };
 

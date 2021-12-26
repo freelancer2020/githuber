@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { githubReposAction } from "../../store/githubUserRepos";
 import { reposStateAction } from "../../store/ReposState";
+import { networkAction } from "../../store/network";
 import { RootState, AppDispatch } from "../../store/store";
 import { ArrowRightAlt } from "@mui/icons-material";
 
@@ -76,6 +77,7 @@ const ResulterRows: React.FC<ResulterProps> = (props) => {
 
   const getRepo = () => {
     dispatch(reposStateAction.activeRepos());
+    dispatch(networkAction.fetchStart());
     window
       .fetch(userRepos)
       .then((response) => {
@@ -83,6 +85,9 @@ const ResulterRows: React.FC<ResulterProps> = (props) => {
         return response.json();
       })
       .then((data: []) => {
+        data.length <= 0
+          ? dispatch(networkAction.noRepos())
+          : dispatch(networkAction.yesRepos());
         let arr: any[] = [];
         data.map((item) => {
           arr.push({
@@ -94,6 +99,7 @@ const ResulterRows: React.FC<ResulterProps> = (props) => {
           });
         });
         dispatch(githubReposAction.getRepos(arr));
+        dispatch(networkAction.fetchComplete());
       })
       .catch((err) => setError(true));
   };
